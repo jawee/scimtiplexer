@@ -1,0 +1,22 @@
+services:
+  server:
+    container_name: "scimtiplexer-be"
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - secretKey=your-secret-key-here
+    restart: unless-stopped
+
+  client:
+    container_name: "scimtiplexer-fe"
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:5173"
+    depends_on:
+      - server
+    restart: unless-stopped
