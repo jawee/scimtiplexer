@@ -17,6 +17,7 @@ type Querier interface {
 	GetAllScimGroups(ctx context.Context, organisationid string) ([]ScimGroup, error)
 	GetAllScimUsers(ctx context.Context, organisationid string) ([]ScimUser, error)
 	GetAllUsers(ctx context.Context) ([]User, error)
+	GetOrganisationTokenByToken(ctx context.Context, token string) (OrganisationToken, error)
 	GetOrganisationTokens(ctx context.Context, organisationid string) ([]OrganisationToken, error)
 	RegisterUser(ctx context.Context, arg RegisterUserParams) (string, error)
 }

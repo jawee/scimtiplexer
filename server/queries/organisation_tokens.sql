@@ -7,3 +7,7 @@ RETURNING id;
 SELECT * FROM organisation_tokens
 WHERE organisation_id = sqlc.arg(organisationId)
 ORDER BY id DESC;
+
+-- name: GetOrganisationTokenByToken :one
+SELECT * FROM organisation_tokens
+WHERE token = sqlc.arg(token);

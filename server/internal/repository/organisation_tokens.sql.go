@@ -42,6 +42,26 @@ func (q *Queries) CreateOrganisationToken(ctx context.Context, arg CreateOrganis
 	return id, err
 }
 
+const getOrganisationTokenByToken = `-- name: GetOrganisationTokenByToken :one
+SELECT id, organisation_id, token, created_by, created_on_utc, modified_on_utc, modified_by FROM organisation_tokens
+WHERE token = ?1
+`
+
+func (q *Queries) GetOrganisationTokenByToken(ctx context.Context, token string) (OrganisationToken, error) {
+	row := q.db.QueryRowContext(ctx, getOrganisationTokenByToken, token)
+	var i OrganisationToken
+	err := row.Scan(
+		&i.ID,
+		&i.OrganisationID,
+		&i.Token,
+		&i.CreatedBy,
+		&i.CreatedOnUtc,
+		&i.ModifiedOnUtc,
+		&i.ModifiedBy,
+	)
+	return i, err
+}
+
 const getOrganisationTokens = `-- name: GetOrganisationTokens :many
 SELECT id, organisation_id, token, created_by, created_on_utc, modified_on_utc, modified_by FROM organisation_tokens
 WHERE organisation_id = ?1
