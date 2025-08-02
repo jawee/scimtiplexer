@@ -1,4 +1,12 @@
 services:
+  migrations:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.goose
+    env_file: "./server/.env"
+    volumes:
+      - ./server/db:/app/db
+
   server:
     container_name: "scimtiplexer-be"
     build:
@@ -6,9 +14,14 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    environment:
-      - secretKey=your-secret-key-here
+    env_file: "./server/.env"
+    volumes:
+      - ./db:/app/db
     restart: unless-stopped
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+
 
   client:
     container_name: "scimtiplexer-fe"
