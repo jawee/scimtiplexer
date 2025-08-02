@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jawee/scimtiplexer/internal/database"
 	"github.com/jawee/scimtiplexer/internal/repository"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -19,11 +20,12 @@ func main() {
 
 	userId, _ := uuid.NewV7()
 	ctx := context.Background()
+	pwhash, _ := bcrypt.GenerateFromPassword([]byte("test"), bcrypt.DefaultCost)
 	repo.RegisterUser(ctx, repository.RegisterUserParams{
 		ID:            userId.String(),
 		Username:      "testuser",
 		Email:         "test@test.se",
-		Password:      "test1234",
+		Password:      string(pwhash),
 		Createdonutc:  time.Now().UTC(),
 		Modifiedonutc: time.Now().UTC(),
 	})
@@ -39,6 +41,16 @@ func main() {
 	repo.CreateOrganisationUser(ctx, repository.CreateOrganisationUserParams{
 		Organisationid: orgId.String(),
 		Userid:         userId.String(),
+		Createdonutc:   time.Now().UTC(),
+		Modifiedonutc:  time.Now().UTC(),
+	})
+
+	tokenId, _ := uuid.NewV7()
+	repo.CreateOrganisationToken(ctx, repository.CreateOrganisationTokenParams{
+		ID:             tokenId.String(),
+		Organisationid: orgId.String(),
+		Token:          "testtoken",
+		Createdby:      userId.String(),
 		Createdonutc:   time.Now().UTC(),
 		Modifiedonutc:  time.Now().UTC(),
 	})

@@ -18,6 +18,16 @@ type Organisation struct {
 	ModifiedBy    sql.NullString `json:"modified_by"`
 }
 
+type OrganisationToken struct {
+	ID             string         `json:"id"`
+	OrganisationID string         `json:"organisation_id"`
+	Token          string         `json:"token"`
+	CreatedBy      string         `json:"created_by"`
+	CreatedOnUtc   time.Time      `json:"created_on_utc"`
+	ModifiedOnUtc  time.Time      `json:"modified_on_utc"`
+	ModifiedBy     sql.NullString `json:"modified_by"`
+}
+
 type ScimGroup struct {
 	ID               string         `json:"id"`
 	ExternalID       sql.NullString `json:"external_id"`
