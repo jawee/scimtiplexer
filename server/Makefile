@@ -24,6 +24,38 @@ clean:
 	@echo "Cleaning..."
 	@rm -f main
 
+seed:
+	@go run cmd/seed/main.go
+
+db-status:
+	goose status
+
+db-create:
+	cp .default.env .env
+	mkdir db
+	go run cmd/goose/main.go
+	go run cmd/seed/main.go
+
+db-recreate:
+	rm .env
+	rm -rf db
+	make db-create
+
+db-create-docker:
+	cp .default.env .env
+	mkdir db
+	docker build -t goose -f Dockerfile.goose .
+	docker run --rm --env-file .env -v ./db:/app/db goose
+
+db-up:
+	goose up
+
+db-reset:
+	goose reset
+
+db-create-migration:
+	goose create a sql
+
 test-coverage:
 	rm -r testresults || true
 	mkdir testresults

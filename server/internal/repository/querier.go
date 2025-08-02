@@ -8,9 +8,13 @@ import (
 	"context"
 )
 
-type Querier interface {
+type Querier interface { 
 	CreateOrganisation(ctx context.Context, arg CreateOrganisationParams) (string, error)
 	CreateOrganisationUser(ctx context.Context, arg CreateOrganisationUserParams) error
+	CreateScimGroup(ctx context.Context, arg CreateScimGroupParams) (string, error)
+	CreateScimUser(ctx context.Context, arg CreateScimUserParams) (CreateScimUserRow, error)
+	GetAllScimGroups(ctx context.Context, organisationid string) ([]ScimGroup, error)
+	GetAllScimUsers(ctx context.Context, organisationid string) ([]ScimUser, error)
 	GetAllUsers(ctx context.Context) ([]User, error)
 	RegisterUser(ctx context.Context, arg RegisterUserParams) (string, error)
 }

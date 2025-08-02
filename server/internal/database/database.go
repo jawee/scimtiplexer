@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jawee/scimtiplexer/internal/repository"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -23,12 +24,12 @@ type Service interface {
 	// It returns an error if the connection cannot be closed.
 	Close() error
 
-	// GetRepository() repository.Querier
+	GetRepository() repository.Querier
 }
 
 type service struct {
 	db *sql.DB
-	// repo repository.Querier
+	repo repository.Querier
 }
 
 var (
@@ -51,14 +52,14 @@ func New() Service {
 
 	dbInstance = &service{
 		db:   db,
-		// repo: repository.New(db),
+		repo: repository.New(db),
 	}
 	return dbInstance
 }
 
-// func (s *service) GetRepository() repository.Querier {
-// 	return s.repo
-// }
+func (s *service) GetRepository() repository.Querier {
+	return s.repo
+}
 
 // Health checks the health of the database connection by pinging the database.
 // It returns a map with keys indicating various health statistics.
