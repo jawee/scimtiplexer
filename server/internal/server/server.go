@@ -7,11 +7,13 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jawee/scimtiplexer/internal/database"
 	_ "github.com/joho/godotenv/autoload"
 )
 
 type Server struct {
 	port int
+	db   database.Service
 }
 
 func NewServer() *http.Server {
@@ -19,7 +21,7 @@ func NewServer() *http.Server {
 	NewServer := &Server{
 		port: port,
 
-		// db: database.New(),
+		db: database.New(),
 	}
 
 	server := &http.Server{
