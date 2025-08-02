@@ -2,7 +2,7 @@ FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
 
-RUN apk add --no-cache git
+RUN apk add --no-cache alpine-sdk
 
 COPY go.mod go.sum ./
 RUN go mod download

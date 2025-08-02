@@ -15,9 +15,9 @@ var embedMigrations embed.FS
 
 func main() {
 	// setup database
-	dburl := os.Getenv("BLUEPRINT_DB_URL")
+	dburl := os.Getenv("DB_URL")
 	if dburl == "" {
-		panic("BLUEPRINT_DB_URL is empty")
+		panic("DB_URL is empty")
 	}
 	db, err := sql.Open("sqlite3", dburl)
 
