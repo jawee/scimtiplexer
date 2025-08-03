@@ -1,8 +1,10 @@
-FROM golang:1.24-alpine AS builder
+FROM golang:1.24-alpine AS build
+RUN apk add --no-cache alpine-sdk
+
+FROM build AS app
 
 WORKDIR /app
 
-RUN apk add --no-cache alpine-sdk
 
 COPY go.mod go.sum ./
 RUN go mod download
@@ -17,8 +19,8 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-COPY --from=builder /app/main .
-COPY --from=builder /app/.env .
+COPY --from=app /app/main .
+COPY --from=app /app/.env .
 
 EXPOSE 8080
 
