@@ -222,3 +222,52 @@ func (q *Queries) GetAllScimUsers(ctx context.Context, organisationid string) ([
 	}
 	return items, nil
 }
+
+const getScimUserById = `-- name: GetScimUserById :one
+SELECT id, external_id, user_name, display_name, nick_name, profile_url, title, user_type, preferred_language, locale, timezone, active, password, meta_resource_type, meta_created, meta_last_modified, meta_version, name_formatted, name_family_name, name_given_name, name_middle_name, name_honorific_prefix, name_honorific_suffix, employee_number, organization, department, division, cost_center, manager_id, organisation_id FROM scim_users
+WHERE id = ?1
+AND organisation_id = ?2
+`
+
+type GetScimUserByIdParams struct {
+	ID             string `json:"id"`
+	Organisationid string `json:"organisationid"`
+}
+
+func (q *Queries) GetScimUserById(ctx context.Context, arg GetScimUserByIdParams) (ScimUser, error) {
+	row := q.db.QueryRowContext(ctx, getScimUserById, arg.ID, arg.Organisationid)
+	var i ScimUser
+	err := row.Scan(
+		&i.ID,
+		&i.ExternalID,
+		&i.UserName,
+		&i.DisplayName,
+		&i.NickName,
+		&i.ProfileUrl,
+		&i.Title,
+		&i.UserType,
+		&i.PreferredLanguage,
+		&i.Locale,
+		&i.Timezone,
+		&i.Active,
+		&i.Password,
+		&i.MetaResourceType,
+		&i.MetaCreated,
+		&i.MetaLastModified,
+		&i.MetaVersion,
+		&i.NameFormatted,
+		&i.NameFamilyName,
+		&i.NameGivenName,
+		&i.NameMiddleName,
+		&i.NameHonorificPrefix,
+		&i.NameHonorificSuffix,
+		&i.EmployeeNumber,
+		&i.Organization,
+		&i.Department,
+		&i.Division,
+		&i.CostCenter,
+		&i.ManagerID,
+		&i.OrganisationID,
+	)
+	return i, err
+}

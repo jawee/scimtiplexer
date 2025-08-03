@@ -16,10 +16,12 @@ import (
 
 type handler struct {
 	repo repository.Querier
+	service *service
 }
 func RegisterEndpoints(mux *http.ServeMux, repo repository.Querier) {
 	h := &handler{
 		repo: repo,
+		service: &service{repo: repo},
 	}
 
 	slog.Debug("Registering SCIM endpoints")
@@ -35,7 +37,7 @@ func (s *handler) registerScimEndpoints(mux *http.ServeMux) {
 	s.registerScimEndpoint(mux, "GET", "Users/", http.HandlerFunc(s.handleGetUsers))
 	s.registerScimEndpoint(mux, "POST", "Users", http.HandlerFunc(s.handlePostUsers))
 
-	s.registerScimEndpoint(mux, "GET", "Users/{id}", http.HandlerFunc(s.handleGetUsersById))
+	s.registerScimEndpoint(mux, "GET", "Users/{id}", http.HandlerFunc(s.handleGetUserById))
 }
 
 func (s *handler) registerScimEndpoint(mux *http.ServeMux, method, resource string, handler http.Handler) {
@@ -78,14 +80,26 @@ func (s *handler) handlePostUsers(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonOutput)
 }
 
-func (s *handler) handleGetUsersById(w http.ResponseWriter, r *http.Request) {
-	slog.Debug("handleGetUsersById called for organisation", "orgid", r.Context().Value("orgid"))
+func (s *handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
+	slog.Debug("handleGetUserById called for organisation", "orgid", r.Context().Value("orgid"))
 	requestedId := r.PathValue("id")
 	slog.Debug("Requested user ID", "id", requestedId)
 
+	user, err := s.service.GetUser(r.Context(), r.Context().Value("orgid").(string), requestedId)
+	if err != nil {
+		slog.Error("Failed to get user by ID", "error", err, "id", requestedId)
+		if err == sql.ErrNoRows {
+			slog.Info("User not found", "id", requestedId)
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusOK)
-	userResp := DummySCIMUser("")
+	userResp := ScimUserResponse(user)
 	jsonOutput, _ := json.Marshal(userResp)
 	w.Write(jsonOutput)
 }
@@ -235,6 +249,38 @@ func NewSCIMUserResponse(
 	}
 }
 
+func ScimUserResponse(user repository.ScimUser) User {
+	schemas := []string{SchemaUser, SchemaEnterpriseUser}
+
+	createdAt, _ := time.Parse(time.RFC3339, user.MetaCreated)
+	lastModifiedAt, _ := time.Parse(time.RFC3339, user.MetaLastModified)
+
+	usr := User{
+		Schemas:    schemas,
+		ID:         user.ID,
+		Meta: Meta{
+			ResourceType: "User",
+			Created:      createdAt.UTC(),
+			LastModified: lastModifiedAt.UTC(),
+			Location:     "https://api.example.com/scim/v2/Users/" + user.ID,
+			Version:      user.MetaVersion.String,
+		},
+		UserName:          user.UserName,
+		DisplayName:       user.DisplayName.String,
+		Name:              &Name{Formatted: user.NameFormatted.String, FamilyName: user.NameFamilyName.String, GivenName: user.NameGivenName.String, MiddleName: user.NameMiddleName.String, HonorificPrefix: user.NameHonorificPrefix.String},
+		UserType:          user.UserType.String,
+		PreferredLanguage: user.PreferredLanguage.String,
+		Locale:            user.Locale.String,
+		Timezone:          user.Timezone.String,
+		Active:            user.Active,
+	}
+
+	if user.ExternalID.Valid {
+		usr.ExternalID = user.ExternalID.String
+	}
+
+	return usr
+}
 func DummySCIMUser(userID string) User {
 	if userID == "" {
 		userID = "d2d46e8c-8435-4a25-a7b6-1f7c0a9e7b2f"

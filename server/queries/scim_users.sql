@@ -3,6 +3,11 @@ SELECT * FROM scim_users
 WHERE organisation_id = sqlc.arg(organisationId)
 ORDER BY id;
 
+-- name: GetScimUserById :one
+SELECT * FROM scim_users
+WHERE id = sqlc.arg(id)
+AND organisation_id = sqlc.arg(organisationId);
+
 -- name: CreateScimUser :one
 INSERT INTO scim_users (
     id,
