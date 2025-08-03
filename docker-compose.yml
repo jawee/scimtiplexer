@@ -22,7 +22,6 @@ services:
       migrations:
         condition: service_completed_successfully
 
-
   client:
     container_name: "scimtiplexer-fe"
     build:

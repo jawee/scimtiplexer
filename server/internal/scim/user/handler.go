@@ -73,9 +73,22 @@ func (s *handler) handlePostUsers(w http.ResponseWriter, r *http.Request) {
 
 	slog.Debug("User creation request", "request", userReq)
 
+	createdUser, err := s.service.CreateUser(r.Context(), r.Context().Value("orgid").(string), userReq)
+	if err != nil {
+		slog.Error("Failed to create user", "error", err)
+		if err == sql.ErrNoRows {
+			slog.Info("User creation failed, no rows affected")
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	slog.Debug("User created successfully", "userID", createdUser.ID)
+
 	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusCreated)
-	userResp := DummySCIMUser("")
+	userResp := ScimUserResponse(createdUser)
 	jsonOutput, _ := json.Marshal(userResp)
 	w.Write(jsonOutput)
 }
