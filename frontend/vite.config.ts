@@ -1,32 +1,34 @@
+import path from "path"
+import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 
+const timestamp = new Date().getTime()/1000
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: `[name]` + timestamp + `.js`,
+        chunkFileNames: `[name]` + timestamp + `.js`,
+        assetFileNames: `[name]` + timestamp + `.[ext]`
+      }
+    }
+  },
   plugins: [react(), tailwindcss()],
-  server: {
-    host: "0.0.0.0",
-    port: 5173,
-    allowedHosts: ["localhost"],
-    proxy: {
-      "/api": {
-        target: "http://server:8080",
-        changeOrigin: true,
-        secure: false,
-        configure: (proxy, _options) => {
-          proxy.on("proxyReq", (proxyReq, req, _res) => {});
-        },
-      },
-      "/ws": {
-        target: "http://server:8080",
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-        configure: (proxy, _options) => {
-          proxy.on("proxyReq", (proxyReq, req, _res) => {});
-        },
-      },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
     },
   },
-});
+  server: {
+    proxy: {
+      '/api/': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      }
+    }
+  },
+})
+
