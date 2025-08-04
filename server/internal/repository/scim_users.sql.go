@@ -73,52 +73,43 @@ INSERT INTO scim_users (
     ?28,
     ?29,
     ?30
-) RETURNING id, user_name, display_name, meta_created, meta_last_modified, meta_version
+) RETURNING id
 `
 
 type CreateScimUserParams struct {
-	ID                  string         `json:"id"`
-	ExternalID          sql.NullString `json:"external_id"`
-	UserName            string         `json:"user_name"`
-	DisplayName         sql.NullString `json:"display_name"`
-	NickName            sql.NullString `json:"nick_name"`
-	ProfileUrl          sql.NullString `json:"profile_url"`
-	Title               sql.NullString `json:"title"`
-	UserType            sql.NullString `json:"user_type"`
-	PreferredLanguage   sql.NullString `json:"preferred_language"`
-	Locale              sql.NullString `json:"locale"`
-	Timezone            sql.NullString `json:"timezone"`
-	Active              bool           `json:"active"`
-	Password            sql.NullString `json:"password"`
-	MetaResourceType    string         `json:"meta_resource_type"`
-	MetaCreated         string         `json:"meta_created"`
-	MetaLastModified    string         `json:"meta_last_modified"`
-	MetaVersion         sql.NullString `json:"meta_version"`
-	NameFormatted       sql.NullString `json:"name_formatted"`
-	NameFamilyName      sql.NullString `json:"name_family_name"`
-	NameGivenName       sql.NullString `json:"name_given_name"`
-	NameMiddleName      sql.NullString `json:"name_middle_name"`
-	NameHonorificPrefix sql.NullString `json:"name_honorific_prefix"`
-	NameHonorificSuffix sql.NullString `json:"name_honorific_suffix"`
-	EmployeeNumber      sql.NullString `json:"employee_number"`
-	Organization        sql.NullString `json:"organization"`
-	Department          sql.NullString `json:"department"`
-	Division            sql.NullString `json:"division"`
-	CostCenter          sql.NullString `json:"cost_center"`
-	ManagerID           sql.NullString `json:"manager_id"`
-	OrganisationID      string         `json:"organisation_id"`
+	ID                  string
+	ExternalID          sql.NullString
+	UserName            string
+	DisplayName         sql.NullString
+	NickName            sql.NullString
+	ProfileUrl          sql.NullString
+	Title               sql.NullString
+	UserType            sql.NullString
+	PreferredLanguage   sql.NullString
+	Locale              sql.NullString
+	Timezone            sql.NullString
+	Active              bool
+	Password            sql.NullString
+	MetaResourceType    string
+	MetaCreated         string
+	MetaLastModified    string
+	MetaVersion         sql.NullString
+	NameFormatted       sql.NullString
+	NameFamilyName      sql.NullString
+	NameGivenName       sql.NullString
+	NameMiddleName      sql.NullString
+	NameHonorificPrefix sql.NullString
+	NameHonorificSuffix sql.NullString
+	EmployeeNumber      sql.NullString
+	Organization        sql.NullString
+	Department          sql.NullString
+	Division            sql.NullString
+	CostCenter          sql.NullString
+	ManagerID           sql.NullString
+	OrganisationID      string
 }
 
-type CreateScimUserRow struct {
-	ID               string         `json:"id"`
-	UserName         string         `json:"user_name"`
-	DisplayName      sql.NullString `json:"display_name"`
-	MetaCreated      string         `json:"meta_created"`
-	MetaLastModified string         `json:"meta_last_modified"`
-	MetaVersion      sql.NullString `json:"meta_version"`
-}
-
-func (q *Queries) CreateScimUser(ctx context.Context, arg CreateScimUserParams) (CreateScimUserRow, error) {
+func (q *Queries) CreateScimUser(ctx context.Context, arg CreateScimUserParams) (string, error) {
 	row := q.db.QueryRowContext(ctx, createScimUser,
 		arg.ID,
 		arg.ExternalID,
@@ -151,16 +142,9 @@ func (q *Queries) CreateScimUser(ctx context.Context, arg CreateScimUserParams) 
 		arg.ManagerID,
 		arg.OrganisationID,
 	)
-	var i CreateScimUserRow
-	err := row.Scan(
-		&i.ID,
-		&i.UserName,
-		&i.DisplayName,
-		&i.MetaCreated,
-		&i.MetaLastModified,
-		&i.MetaVersion,
-	)
-	return i, err
+	var id string
+	err := row.Scan(&id)
+	return id, err
 }
 
 const getAllScimUsers = `-- name: GetAllScimUsers :many
@@ -230,8 +214,8 @@ AND organisation_id = ?2
 `
 
 type GetScimUserByIdParams struct {
-	ID             string `json:"id"`
-	Organisationid string `json:"organisationid"`
+	ID             string
+	Organisationid string
 }
 
 func (q *Queries) GetScimUserById(ctx context.Context, arg GetScimUserByIdParams) (ScimUser, error) {

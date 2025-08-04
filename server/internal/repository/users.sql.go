@@ -54,14 +54,14 @@ RETURNING id
 `
 
 type RegisterUserParams struct {
-	ID            string         `json:"id"`
-	Username      string         `json:"username"`
-	Email         string         `json:"email"`
-	Password      string         `json:"password"`
-	Createdby     sql.NullString `json:"createdby"`
-	Createdonutc  time.Time      `json:"createdonutc"`
-	Modifiedonutc time.Time      `json:"modifiedonutc"`
-	Modifiedby    sql.NullString `json:"modifiedby"`
+	ID            string
+	Username      string
+	Email         string
+	Password      string
+	Createdby     sql.NullString
+	Createdonutc  time.Time
+	Modifiedonutc time.Time
+	Modifiedby    sql.NullString
 }
 
 func (q *Queries) RegisterUser(ctx context.Context, arg RegisterUserParams) (string, error) {

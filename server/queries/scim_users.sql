@@ -71,4 +71,4 @@ INSERT INTO scim_users (
     sqlc.arg(cost_center),
     sqlc.arg(manager_id),
     sqlc.arg(organisation_id)
-) RETURNING id, user_name, display_name, meta_created, meta_last_modified, meta_version;
+) RETURNING id;

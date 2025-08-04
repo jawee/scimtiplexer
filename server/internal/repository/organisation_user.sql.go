@@ -16,10 +16,10 @@ VALUES (?1, ?2, ?3, ?4)
 `
 
 type CreateOrganisationUserParams struct {
-	Userid         string    `json:"userid"`
-	Organisationid string    `json:"organisationid"`
-	Createdonutc   time.Time `json:"createdonutc"`
-	Modifiedonutc  time.Time `json:"modifiedonutc"`
+	Userid         string
+	Organisationid string
+	Createdonutc   time.Time
+	Modifiedonutc  time.Time
 }
 
 func (q *Queries) CreateOrganisationUser(ctx context.Context, arg CreateOrganisationUserParams) error {

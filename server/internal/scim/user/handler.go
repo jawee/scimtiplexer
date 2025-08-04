@@ -12,15 +12,14 @@ import (
 	"github.com/jawee/scimtiplexer/internal/repository"
 )
 
-
-
 type handler struct {
-	repo repository.Querier
+	repo    repository.Querier
 	service *service
 }
+
 func RegisterEndpoints(mux *http.ServeMux, repo repository.Querier) {
 	h := &handler{
-		repo: repo,
+		repo:    repo,
 		service: &service{repo: repo},
 	}
 
@@ -147,6 +146,7 @@ func (s *handler) ScimEndpointAuth(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
 const (
 	SchemaUser                  = "urn:ietf:params:scim:schemas:core:2.0:User"
 	SchemaGroup                 = "urn:ietf:params:scim:schemas:core:2.0:Group"
@@ -269,31 +269,42 @@ func ScimUserResponse(user repository.ScimUser) User {
 	lastModifiedAt, _ := time.Parse(time.RFC3339, user.MetaLastModified)
 
 	usr := User{
-		Schemas:    schemas,
-		ID:         user.ID,
+		Schemas: schemas,
+		ID:      user.ID,
 		Meta: Meta{
 			ResourceType: "User",
 			Created:      createdAt.UTC(),
 			LastModified: lastModifiedAt.UTC(),
 			Location:     "https://api.example.com/scim/v2/Users/" + user.ID,
-			Version:      user.MetaVersion.String,
+			Version:      nullStringToString(user.MetaVersion),
 		},
-		UserName:          user.UserName,
-		DisplayName:       user.DisplayName.String,
-		Name:              &Name{Formatted: user.NameFormatted.String, FamilyName: user.NameFamilyName.String, GivenName: user.NameGivenName.String, MiddleName: user.NameMiddleName.String, HonorificPrefix: user.NameHonorificPrefix.String},
-		UserType:          user.UserType.String,
-		PreferredLanguage: user.PreferredLanguage.String,
-		Locale:            user.Locale.String,
-		Timezone:          user.Timezone.String,
+		UserName:    user.UserName,
+		DisplayName: nullStringToString(user.DisplayName),
+		Name: &Name{
+			Formatted:       nullStringToString(user.NameFormatted),
+			FamilyName:      nullStringToString(user.NameFamilyName),
+			GivenName:       nullStringToString(user.NameGivenName),
+			MiddleName:      nullStringToString(user.NameMiddleName),
+			HonorificPrefix: nullStringToString(user.NameHonorificPrefix),
+		},
+		UserType:          nullStringToString(user.UserType),
+		PreferredLanguage: nullStringToString(user.PreferredLanguage),
+		Locale:            nullStringToString(user.Locale),
+		Timezone:          nullStringToString(user.Timezone),
 		Active:            user.Active,
-	}
-
-	if user.ExternalID.Valid {
-		usr.ExternalID = user.ExternalID.String
+		ExternalID:        nullStringToString(user.ExternalID),
 	}
 
 	return usr
 }
+
+func nullStringToString(ns sql.NullString) string {
+	if ns.Valid {
+		return ns.String
+	}
+	return ""
+}
+
 func DummySCIMUser(userID string) User {
 	if userID == "" {
 		userID = "d2d46e8c-8435-4a25-a7b6-1f7c0a9e7b2f"

@@ -10,105 +10,105 @@ import (
 )
 
 type Organisation struct {
-	ID            string         `json:"id"`
-	Name          string         `json:"name"`
-	CreatedBy     sql.NullString `json:"created_by"`
-	CreatedOnUtc  time.Time      `json:"created_on_utc"`
-	ModifiedOnUtc time.Time      `json:"modified_on_utc"`
-	ModifiedBy    sql.NullString `json:"modified_by"`
+	ID            string
+	Name          string
+	CreatedBy     sql.NullString
+	CreatedOnUtc  time.Time
+	ModifiedOnUtc time.Time
+	ModifiedBy    sql.NullString
 }
 
 type OrganisationToken struct {
-	ID             string         `json:"id"`
-	OrganisationID string         `json:"organisation_id"`
-	Token          string         `json:"token"`
-	CreatedBy      string         `json:"created_by"`
-	CreatedOnUtc   time.Time      `json:"created_on_utc"`
-	ModifiedOnUtc  time.Time      `json:"modified_on_utc"`
-	ModifiedBy     sql.NullString `json:"modified_by"`
+	ID             string
+	OrganisationID string
+	Token          string
+	CreatedBy      string
+	CreatedOnUtc   time.Time
+	ModifiedOnUtc  time.Time
+	ModifiedBy     sql.NullString
 }
 
 type ScimGroup struct {
-	ID               string         `json:"id"`
-	ExternalID       sql.NullString `json:"external_id"`
-	DisplayName      string         `json:"display_name"`
-	MetaResourceType string         `json:"meta_resource_type"`
-	MetaCreated      string         `json:"meta_created"`
-	MetaLastModified string         `json:"meta_last_modified"`
-	MetaVersion      sql.NullString `json:"meta_version"`
-	OrganisationID   string         `json:"organisation_id"`
+	ID               string
+	ExternalID       sql.NullString
+	DisplayName      string
+	MetaResourceType string
+	MetaCreated      string
+	MetaLastModified string
+	MetaVersion      sql.NullString
+	OrganisationID   string
 }
 
 type ScimUser struct {
-	ID                  string         `json:"id"`
-	ExternalID          sql.NullString `json:"external_id"`
-	UserName            string         `json:"user_name"`
-	DisplayName         sql.NullString `json:"display_name"`
-	NickName            sql.NullString `json:"nick_name"`
-	ProfileUrl          sql.NullString `json:"profile_url"`
-	Title               sql.NullString `json:"title"`
-	UserType            sql.NullString `json:"user_type"`
-	PreferredLanguage   sql.NullString `json:"preferred_language"`
-	Locale              sql.NullString `json:"locale"`
-	Timezone            sql.NullString `json:"timezone"`
-	Active              bool           `json:"active"`
-	Password            sql.NullString `json:"password"`
-	MetaResourceType    string         `json:"meta_resource_type"`
-	MetaCreated         string         `json:"meta_created"`
-	MetaLastModified    string         `json:"meta_last_modified"`
-	MetaVersion         sql.NullString `json:"meta_version"`
-	NameFormatted       sql.NullString `json:"name_formatted"`
-	NameFamilyName      sql.NullString `json:"name_family_name"`
-	NameGivenName       sql.NullString `json:"name_given_name"`
-	NameMiddleName      sql.NullString `json:"name_middle_name"`
-	NameHonorificPrefix sql.NullString `json:"name_honorific_prefix"`
-	NameHonorificSuffix sql.NullString `json:"name_honorific_suffix"`
-	EmployeeNumber      sql.NullString `json:"employee_number"`
-	Organization        sql.NullString `json:"organization"`
-	Department          sql.NullString `json:"department"`
-	Division            sql.NullString `json:"division"`
-	CostCenter          sql.NullString `json:"cost_center"`
-	ManagerID           sql.NullString `json:"manager_id"`
-	OrganisationID      string         `json:"organisation_id"`
+	ID                  string
+	ExternalID          sql.NullString
+	UserName            string
+	DisplayName         sql.NullString
+	NickName            sql.NullString
+	ProfileUrl          sql.NullString
+	Title               sql.NullString
+	UserType            sql.NullString
+	PreferredLanguage   sql.NullString
+	Locale              sql.NullString
+	Timezone            sql.NullString
+	Active              bool
+	Password            sql.NullString
+	MetaResourceType    string
+	MetaCreated         string
+	MetaLastModified    string
+	MetaVersion         sql.NullString
+	NameFormatted       sql.NullString
+	NameFamilyName      sql.NullString
+	NameGivenName       sql.NullString
+	NameMiddleName      sql.NullString
+	NameHonorificPrefix sql.NullString
+	NameHonorificSuffix sql.NullString
+	EmployeeNumber      sql.NullString
+	Organization        sql.NullString
+	Department          sql.NullString
+	Division            sql.NullString
+	CostCenter          sql.NullString
+	ManagerID           sql.NullString
+	OrganisationID      string
 }
 
 type ScimUserEmail struct {
-	ID           string         `json:"id"`
-	UserID       string         `json:"user_id"`
-	Value        string         `json:"value"`
-	Display      sql.NullString `json:"display"`
-	Type         sql.NullString `json:"type"`
-	PrimaryEmail sql.NullBool   `json:"primary_email"`
+	ID           string
+	UserID       string
+	Value        string
+	Display      sql.NullString
+	Type         sql.NullString
+	PrimaryEmail sql.NullBool
 }
 
 type ScimUserGroupMembership struct {
-	UserID  string `json:"user_id"`
-	GroupID string `json:"group_id"`
+	UserID  string
+	GroupID string
 }
 
 type ScimUserPhoneNumber struct {
-	ID                 string         `json:"id"`
-	UserID             string         `json:"user_id"`
-	Value              string         `json:"value"`
-	Display            sql.NullString `json:"display"`
-	Type               sql.NullString `json:"type"`
-	PrimaryPhoneNumber sql.NullBool   `json:"primary_phone_number"`
+	ID                 string
+	UserID             string
+	Value              string
+	Display            sql.NullString
+	Type               sql.NullString
+	PrimaryPhoneNumber sql.NullBool
 }
 
 type User struct {
-	ID            string         `json:"id"`
-	Username      string         `json:"username"`
-	Email         string         `json:"email"`
-	Password      string         `json:"password"`
-	CreatedBy     sql.NullString `json:"created_by"`
-	CreatedOnUtc  time.Time      `json:"created_on_utc"`
-	ModifiedOnUtc time.Time      `json:"modified_on_utc"`
-	ModifiedBy    sql.NullString `json:"modified_by"`
+	ID            string
+	Username      string
+	Email         string
+	Password      string
+	CreatedBy     sql.NullString
+	CreatedOnUtc  time.Time
+	ModifiedOnUtc time.Time
+	ModifiedBy    sql.NullString
 }
 
 type UserOrganisation struct {
-	UserID         string    `json:"user_id"`
-	OrganisationID string    `json:"organisation_id"`
-	CreatedOnUtc   time.Time `json:"created_on_utc"`
-	ModifiedOnUtc  time.Time `json:"modified_on_utc"`
+	UserID         string
+	OrganisationID string
+	CreatedOnUtc   time.Time
+	ModifiedOnUtc  time.Time
 }

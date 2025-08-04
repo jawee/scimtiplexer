@@ -13,13 +13,19 @@ type Querier interface {
 	CreateOrganisationToken(ctx context.Context, arg CreateOrganisationTokenParams) (string, error)
 	CreateOrganisationUser(ctx context.Context, arg CreateOrganisationUserParams) error
 	CreateScimGroup(ctx context.Context, arg CreateScimGroupParams) (string, error)
-	CreateScimUser(ctx context.Context, arg CreateScimUserParams) (CreateScimUserRow, error)
+	CreateScimUser(ctx context.Context, arg CreateScimUserParams) (string, error)
+	CreateUserEmail(ctx context.Context, arg CreateUserEmailParams) error
+	CreateUserGroupMembership(ctx context.Context, arg CreateUserGroupMembershipParams) error
+	CreateUserPhoneNumber(ctx context.Context, arg CreateUserPhoneNumberParams) error
 	GetAllScimGroups(ctx context.Context, organisationid string) ([]ScimGroup, error)
 	GetAllScimUsers(ctx context.Context, organisationid string) ([]ScimUser, error)
 	GetAllUsers(ctx context.Context) ([]User, error)
 	GetOrganisationTokenByToken(ctx context.Context, token string) (OrganisationToken, error)
 	GetOrganisationTokens(ctx context.Context, organisationid string) ([]OrganisationToken, error)
 	GetScimUserById(ctx context.Context, arg GetScimUserByIdParams) (ScimUser, error)
+	GetUserEmails(ctx context.Context, userID string) ([]ScimUserEmail, error)
+	GetUserGroupMemberships(ctx context.Context, userID string) ([]ScimUserGroupMembership, error)
+	GetUserPhoneNumbers(ctx context.Context, userID string) ([]ScimUserPhoneNumber, error)
 	RegisterUser(ctx context.Context, arg RegisterUserParams) (string, error)
 }
 

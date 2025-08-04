@@ -17,11 +17,11 @@ RETURNING id
 `
 
 type CreateScimGroupParams struct {
-	ID             string         `json:"id"`
-	Displayname    string         `json:"displayname"`
-	Externalid     sql.NullString `json:"externalid"`
-	Metaversion    sql.NullString `json:"metaversion"`
-	Organisationid string         `json:"organisationid"`
+	ID             string
+	Displayname    string
+	Externalid     sql.NullString
+	Metaversion    sql.NullString
+	Organisationid string
 }
 
 func (q *Queries) CreateScimGroup(ctx context.Context, arg CreateScimGroupParams) (string, error) {

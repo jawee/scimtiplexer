@@ -18,13 +18,13 @@ RETURNING id
 `
 
 type CreateOrganisationTokenParams struct {
-	ID             string         `json:"id"`
-	Organisationid string         `json:"organisationid"`
-	Token          string         `json:"token"`
-	Createdby      string         `json:"createdby"`
-	Createdonutc   time.Time      `json:"createdonutc"`
-	Modifiedonutc  time.Time      `json:"modifiedonutc"`
-	Modifiedby     sql.NullString `json:"modifiedby"`
+	ID             string
+	Organisationid string
+	Token          string
+	Createdby      string
+	Createdonutc   time.Time
+	Modifiedonutc  time.Time
+	Modifiedby     sql.NullString
 }
 
 func (q *Queries) CreateOrganisationToken(ctx context.Context, arg CreateOrganisationTokenParams) (string, error) {

@@ -18,12 +18,12 @@ RETURNING id
 `
 
 type CreateOrganisationParams struct {
-	ID            string         `json:"id"`
-	Name          string         `json:"name"`
-	Createdby     sql.NullString `json:"createdby"`
-	Createdonutc  time.Time      `json:"createdonutc"`
-	Modifiedonutc time.Time      `json:"modifiedonutc"`
-	Modifiedby    sql.NullString `json:"modifiedby"`
+	ID            string
+	Name          string
+	Createdby     sql.NullString
+	Createdonutc  time.Time
+	Modifiedonutc time.Time
+	Modifiedby    sql.NullString
 }
 
 func (q *Queries) CreateOrganisation(ctx context.Context, arg CreateOrganisationParams) (string, error) {

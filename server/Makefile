@@ -52,6 +52,8 @@ db-up:
 
 db-reset:
 	goose reset
+	goose up
+	make seed
 
 db-create-migration:
 	goose create a sql
