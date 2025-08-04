@@ -262,7 +262,7 @@ func NewSCIMUserResponse(
 	}
 }
 
-func ScimUserResponse(user repository.ScimUser) User {
+func ScimUserResponse(user scimUserDto) User {
 	schemas := []string{SchemaUser, SchemaEnterpriseUser}
 
 	createdAt, _ := time.Parse(time.RFC3339, user.MetaCreated)
@@ -276,33 +276,63 @@ func ScimUserResponse(user repository.ScimUser) User {
 			Created:      createdAt.UTC(),
 			LastModified: lastModifiedAt.UTC(),
 			Location:     "https://api.example.com/scim/v2/Users/" + user.ID,
-			Version:      nullStringToString(user.MetaVersion),
+			Version:      user.MetaVersion,
 		},
-		UserName:    user.UserName,
-		DisplayName: nullStringToString(user.DisplayName),
-		Name: &Name{
-			Formatted:       nullStringToString(user.NameFormatted),
-			FamilyName:      nullStringToString(user.NameFamilyName),
-			GivenName:       nullStringToString(user.NameGivenName),
-			MiddleName:      nullStringToString(user.NameMiddleName),
-			HonorificPrefix: nullStringToString(user.NameHonorificPrefix),
-		},
-		UserType:          nullStringToString(user.UserType),
-		PreferredLanguage: nullStringToString(user.PreferredLanguage),
-		Locale:            nullStringToString(user.Locale),
-		Timezone:          nullStringToString(user.Timezone),
+		UserName:          user.UserName,
+		DisplayName:       user.DisplayName,
+		UserType:          user.UserType,
+		PreferredLanguage: user.PreferredLanguage,
+		Locale:            user.Locale,
+		Timezone:          user.Timezone,
 		Active:            user.Active,
-		ExternalID:        nullStringToString(user.ExternalID),
+		ExternalID:        user.ExternalID,
+		NickName:          user.NickName,
+		ProfileURL:        user.ProfileUrl,
+		Title:             user.Title,
+		Emails:            []Email{},
+		PhoneNumbers:      []PhoneNumber{},
+		Groups:            []GroupMember{},
+		Name: &Name{
+			Formatted:       user.NameFormatted,
+			FamilyName:      user.NameFamilyName,
+			GivenName:       user.NameGivenName,
+			MiddleName:      user.NameMiddleName,
+			HonorificPrefix: user.NameHonorificPrefix,
+			HonorificSuffix: user.NameHonorificSuffix,
+		},
+	}
+
+	usr.EnterpriseUser = &EnterpriseUserExtension{
+		EmployeeNumber: user.EmployeeNumber,
+		Organization:   user.Organization,
+		Department:     user.Department,
+		Division:       user.Division,
+		CostCenter:     user.CostCenter,
+		Manager: &Manager{
+			Value:       user.ManagerID,
+			Ref:         "https://api.example.com/scim/v2/Users/" + user.ManagerID,
+			DisplayName: "", //TODO: Fetch manager display name if available
+		},
+	}
+
+	for _, email := range user.Emails {
+		usr.Emails = append(usr.Emails, Email{
+			Value:   email.Value,
+			Display: email.DisplayName,
+			Type:    email.Type,
+			Primary: email.Primary,
+		})
+	}
+	for _, phone := range user.PhoneNumbers {
+		usr.PhoneNumbers = append(usr.PhoneNumbers, PhoneNumber{
+			Value:   phone.Value,
+			Display: phone.DisplayName,
+			Type:    phone.Type,
+			Primary: phone.Primary,
+		})
 	}
 
 	return usr
-}
-
-func nullStringToString(ns sql.NullString) string {
-	if ns.Valid {
-		return ns.String
-	}
-	return ""
 }
 
 func DummySCIMUser(userID string) User {
