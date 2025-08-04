@@ -53,7 +53,7 @@ db-up:
 db-reset:
 	goose reset
 	goose up
-	make seed
+	@go run cmd/seed/main.go
 
 db-create-migration:
 	goose create a sql
