@@ -15,6 +15,30 @@ type service struct {
 	repo repository.Querier
 }
 
+func (s *service) GetAllUsers(ctx context.Context, organisationId string) ([]scimUserDto, error) {
+	users, err := s.repo.GetAllScimUsers(ctx, organisationId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetScimUsersByOrganisationId: %w", err)
+	}
+
+	var userDtos []scimUserDto
+	for _, user := range users {
+		userEmails, err := s.repo.GetUserEmails(ctx, user.ID)
+		if err != nil {
+			slog.Error("failed to GetUserEmails", "error", err, "userId", user.ID)
+		}
+		userPhoneNumbers, err := s.repo.GetUserPhoneNumbers(ctx, user.ID)
+		if err != nil {
+			slog.Error("failed to GetUserPhoneNumbers", "error", err, "userId", user.ID)
+		}
+
+		dto := newScimUserDto(user, userEmails, userPhoneNumbers)
+		userDtos = append(userDtos, dto)
+	}
+
+	return userDtos, nil
+}
+
 func (s *service) GetUser(ctx context.Context, organisationId, id string) (scimUserDto, error) {
 	user, err := s.repo.GetScimUserById(ctx, repository.GetScimUserByIdParams{
 		Organisationid: organisationId,

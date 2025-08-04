@@ -45,17 +45,39 @@ func (s *handler) registerScimEndpoint(mux *http.ServeMux, method, resource stri
 }
 
 func (s *handler) handleGetUsers(w http.ResponseWriter, r *http.Request) {
-	slog.Debug("handleGetUsers called for organisation", "orgid", r.Context().Value("orgid"))
-	queryParams := r.URL.Query()
+	organisationId, ok := r.Context().Value("orgid").(string)
+	if !ok || organisationId == "" {
+		slog.Error("Organisation ID not found in context")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
+	slog.Debug("handleGetUsers called for organisation", "orgid", r.Context().Value("orgid"))
+
+	// TODO: Handle filter and attributes
+	queryParams := r.URL.Query()
 	slog.Debug("Query parameters", "params", queryParams)
 
-	// Here you would typically fetch users from the database based on the organisation ID
-	// For now, we will just return a placeholder response
+	users, err := s.service.GetAllUsers(r.Context(), organisationId)
+	if err != nil {
+		slog.Error("Failed to get users", "error", err)
+		if err == sql.ErrNoRows {
+			slog.Info("No users found for organisation", "orgid", r.Context().Value("orgid"))
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	respUsers := make([]User, len(users))
+	for i, user := range users {
+		respUsers[i] = ScimUserResponse(user)
+	}
+
 	w.Header().Set("Content-Type", "application/scim+json")
 	w.WriteHeader(http.StatusOK)
-	user := DummySCIMUser("")
-	userResp := NewSCIMUserListResponse([]User{user}, 1, 1, 1)
+	userResp := NewSCIMUserListResponse(respUsers, len(respUsers), 1, len(respUsers))
 	jsonOutput, _ := json.Marshal(userResp)
 	w.Write(jsonOutput)
 }
